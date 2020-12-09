@@ -88,6 +88,7 @@ The final project of Machine Learning Course, 2020 fall, School of Electronic an
 - Fix some typos of the original codes
 - The hyperparameters are defined in `kpn_specs/kpn_config.conf`
 - You can change the dataset config in `dataset_specs/full_dataset.conf`
+- Make sure the type of image is setting correct in `kpn_ata_provider.py/TrainDataSet`
 
 
 

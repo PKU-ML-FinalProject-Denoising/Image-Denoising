@@ -158,6 +158,7 @@ def train(config, num_workers, num_threads, cuda, restart_train, mGPU):
             if cuda:
                 burst_noise = burst_noise.cuda()
                 gt = gt.cuda()
+                white_level = white_level.cuda()
             # print('white_level', white_level, white_level.size())
 
             #

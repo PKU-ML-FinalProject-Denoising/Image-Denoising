@@ -77,6 +77,7 @@ class TrainDataSet(torch.utils.data.Dataset):
         self.upscale = self.dataset_config['down_sample']
         self.big_jitter = self.dataset_config['big_jitter']
         self.small_jitter = self.dataset_config['small_jitter']
+
         self.noise_type_gaussian = self.dataset_config['gaussian_noise']
         self.noise_type_impulse = self.dataset_config['impulse_noise']
         

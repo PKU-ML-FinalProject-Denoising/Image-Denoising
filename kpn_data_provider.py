@@ -77,6 +77,9 @@ class TrainDataSet(torch.utils.data.Dataset):
         self.upscale = self.dataset_config['down_sample']
         self.big_jitter = self.dataset_config['big_jitter']
         self.small_jitter = self.dataset_config['small_jitter']
+        self.noise_type_gaussian = self.dataset_config['gaussian_noise']
+        self.noise_type_impulse = self.dataset_config['impulse_noise']
+        
         # 对应下采样之前图像的最大偏移量
         self.jitter_upscale = self.big_jitter * self.upscale
         # 对应下采样之前的图像的patch尺寸
@@ -188,8 +191,19 @@ class TrainDataSet(torch.utils.data.Dataset):
             sigma_read_com = sigma_read.expand_as(image_burst)
             sigma_shot_com = sigma_shot.expand_as(image_burst)
 
-            # generate noise
-            burst_noise = torch.normal(image_burst, torch.sqrt(sigma_read_com**2 + image_burst * sigma_shot_com)).type_as(image_burst)
+            if self.noise_type_gaussian:
+                # generate Gaussian noise
+                burst_noise = torch.normal(image_burst,
+                                           torch.sqrt(sigma_read_com ** 2 + image_burst * sigma_shot_com)).type_as(image_burst)
+            
+            if self.noise_type_impulse:
+                # generate salt and pepper noise
+                burst_noise=torch.zeros_like(image_burst)
+                noise_tensor=torch.rand(image_burst)
+                salt=torch.max(image_burst)
+                pepper=torch.min(image_burst)
+                burst_noise[noise_tensor<1/2]=salt
+                burst_noise[noise_tensor>1-1/2]=pepper
 
             # burst_noise 恢复到[0,1] 截去外面的值
             burst_noise = torch.clamp(burst_noise, 0.0, 1.0)
@@ -223,9 +237,19 @@ class TrainDataSet(torch.utils.data.Dataset):
             sigma_read_com = sigma_read.expand_as(image_burst)
             sigma_shot_com = sigma_shot.expand_as(image_burst)
 
-            # generate noise
-            burst_noise = torch.normal(image_burst,
-                                       torch.sqrt(sigma_read_com ** 2 + image_burst * sigma_shot_com)).type_as(image_burst)
+            if self.noise_type_gaussian:
+                # generate Gaussian noise
+                burst_noise = torch.normal(image_burst,
+                                           torch.sqrt(sigma_read_com ** 2 + image_burst * sigma_shot_com)).type_as(image_burst)
+            
+            if self.noise_type_impulse:
+                # generate salt and pepper noise
+                burst_noise=torch.zeros_like(image_burst)
+                noise_tensor=torch.rand(image_burst)
+                salt=torch.max(image_burst)
+                pepper=torch.min(image_burst)
+                burst_noise[noise_tensor<1/2]=salt
+                burst_noise[noise_tensor>1-1/2]=pepper
 
             # burst_noise 恢复到[0,1] 截去外面的值
             burst_noise = torch.clamp(burst_noise, 0.0, 1.0)

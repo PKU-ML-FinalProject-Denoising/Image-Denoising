@@ -156,7 +156,7 @@ class TrainDataSet(torch.utils.data.Dataset):
             image_burst = torch.clamp(image_burst, 0.0, 1.0)
 
         if self.degamma:
-            UndosRGBGamma(image_burst)
+            image_burst = UndosRGBGamma(image_burst)
 
         if self.train:
             # data augment
@@ -200,7 +200,7 @@ class TrainDataSet(torch.utils.data.Dataset):
             if self.noise_type_impulse:
                 # generate salt and pepper noise
                 burst_noise=torch.zeros_like(image_burst)
-                noise_tensor=torch.rand(image_burst)
+                noise_tensor=torch.rand(image_burst.shape)
                 salt=torch.max(image_burst)
                 pepper=torch.min(image_burst)
                 burst_noise[noise_tensor<1/2]=salt
@@ -246,7 +246,7 @@ class TrainDataSet(torch.utils.data.Dataset):
             if self.noise_type_impulse:
                 # generate salt and pepper noise
                 burst_noise=torch.zeros_like(image_burst)
-                noise_tensor=torch.rand(image_burst)
+                noise_tensor=torch.rand(image_burst.shape)
                 salt=torch.max(image_burst)
                 pepper=torch.min(image_burst)
                 burst_noise[noise_tensor<1/2]=salt

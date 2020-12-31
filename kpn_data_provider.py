@@ -207,6 +207,7 @@ class TrainDataSet(torch.utils.data.Dataset):
                 pepper=torch.min(image_burst)
                 burst_noise[noise_tensor < self.impulse_noise_prop] = salt
                 burst_noise[noise_tensor > 1 - self.impulse_noise_prop] = pepper
+                burst_noise = burst_noise + image_burst
 
             # burst_noise 恢复到[0,1] 截去外面的值
             burst_noise = torch.clamp(burst_noise, 0.0, 1.0)
@@ -253,6 +254,7 @@ class TrainDataSet(torch.utils.data.Dataset):
                 pepper=torch.min(image_burst)
                 burst_noise[noise_tensor < self.impulse_noise_prop] = salt
                 burst_noise[noise_tensor > 1 - self.impulse_noise_prop] = pepper
+                burst_noise = burst_noise + image_burst
 
             # burst_noise 恢复到[0,1] 截去外面的值
             burst_noise = torch.clamp(burst_noise, 0.0, 1.0)

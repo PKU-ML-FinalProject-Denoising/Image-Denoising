@@ -80,6 +80,8 @@ class TrainDataSet(torch.utils.data.Dataset):
 
         self.noise_type_gaussian = self.dataset_config['gaussian_noise']
         self.noise_type_impulse = self.dataset_config['impulse_noise']
+
+        self.impulse_noise_prop = self.dataset_config['impulse_noise_prop']
         
         # 对应下采样之前图像的最大偏移量
         self.jitter_upscale = self.big_jitter * self.upscale
@@ -203,8 +205,8 @@ class TrainDataSet(torch.utils.data.Dataset):
                 noise_tensor=torch.rand(image_burst.shape)
                 salt=torch.max(image_burst)
                 pepper=torch.min(image_burst)
-                burst_noise[noise_tensor<1/2]=salt
-                burst_noise[noise_tensor>1-1/2]=pepper
+                burst_noise[noise_tensor < self.impulse_noise_prop] = salt
+                burst_noise[noise_tensor > 1 - self.impulse_noise_prop] = pepper
 
             # burst_noise 恢复到[0,1] 截去外面的值
             burst_noise = torch.clamp(burst_noise, 0.0, 1.0)
@@ -249,8 +251,8 @@ class TrainDataSet(torch.utils.data.Dataset):
                 noise_tensor=torch.rand(image_burst.shape)
                 salt=torch.max(image_burst)
                 pepper=torch.min(image_burst)
-                burst_noise[noise_tensor<1/2]=salt
-                burst_noise[noise_tensor>1-1/2]=pepper
+                burst_noise[noise_tensor < self.impulse_noise_prop] = salt
+                burst_noise[noise_tensor > 1 - self.impulse_noise_prop] = pepper
 
             # burst_noise 恢复到[0,1] 截去外面的值
             burst_noise = torch.clamp(burst_noise, 0.0, 1.0)
